@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TP SQL - Restaurant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-body: #0f172a;
+            --bg-card: #1e293b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.4);
+            --secondary: #8b5cf6;
+            --accent: #06b6d4;
+            --code-bg: #0b1120;
+            --border: #334155;
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.6;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(59, 130, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(139, 92, 246, 0.08), transparent 25%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-align: center;
+            letter-spacing: -0.025em;
+            margin-bottom: 3rem;
+            background: linear-gradient(135deg, #60a5fa 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(96, 165, 250, 0.3);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-top: 3.5rem;
+            margin-bottom: 1.5rem;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+        }
+
+        h2::before {
+            content: '';
+            display: block;
+            width: 6px;
+            height: 24px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            margin-right: 16px;
+            border-radius: 4px;
+            box-shadow: 0 0 12px var(--primary-glow);
+        }
+
+        h3 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            border-left: 3px solid var(--border);
+            padding-left: 12px;
+        }
+
+        p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            font-size: 1.05rem;
+        }
+
+        strong {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        /* Code Blocks */
+        pre.sql {
+            background: var(--code-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            overflow-x: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.95rem;
+            color: #a5b4fc; /* soft indigo */
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.2);
+            position: relative;
+            margin-bottom: 1.5rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        pre.sql:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            border-color: #475569;
+        }
+
+        /* Syntax Highlighting Simulation */
+        /* Since we can't inject spans easily in the existing text without parsing, 
+           we rely on the naturally distinct monospaced look. 
+           However, we can style the whole block nicely. */
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            margin: 20px 0;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        thead {
+            background: rgba(51, 65, 85, 0.5);
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        th {
+            font-weight: 600;
+            color: #f8fafc;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+        }
+
+        td {
+            color: var(--text-muted);
+            font-variant-numeric: tabular-nums;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s;
+        }
+
+        tbody tr:hover {
+            background-color: rgba(59, 130, 246, 0.05); /* very subtle blue tint */
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-animate {
+            animation: fadeInUp 0.6s ease-out forwards;
+            opacity: 0;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-body);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 5px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TP SQL</h1>
+
+        <div class="section-animate" style="animation-delay: 0.1s;">
+            <h2>1) Création de la base de données</h2>
+            <pre class="sql">CREATE DATABASE RestaurantDB;
+USE RestaurantDB;</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.2s;">
+            <h2>2) Création des tables</h2>
+            <pre class="sql">CREATE TABLE Client (
+  idClient INT AUTO_INCREMENT PRIMARY KEY,
+  nom VARCHAR(50),
+  telephone VARCHAR(20)
+);
+
+CREATE TABLE TableRestaurant (
+  idTable INT AUTO_INCREMENT PRIMARY KEY,
+  numero INT,
+  capacite INT
+);
+
+CREATE TABLE Reservation (
+  idReservation INT AUTO_INCREMENT PRIMARY KEY,
+  idClient INT,
+  idTable INT,
+  dateReservation DATE,
+  heure TIME,
+  nombrePersonnes INT,
+  FOREIGN KEY (idClient) REFERENCES Client(idClient),
+  FOREIGN KEY (idTable) REFERENCES TableRestaurant(idTable)
+);</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.3s;">
+            <h2>3) Insertion des données (exemples)</h2>
+            <pre class="sql">-- Clients (au moins 3)
+INSERT INTO Client (nom, telephone) VALUES
+('Imad', '060000001'),
+('Hamza', '060000002'),
+('Brahim', '060000003');
+
+-- Tables du restaurant (au moins 3)
+INSERT INTO TableRestaurant (numero, capacite) VALUES
+(1, 2),
+(2, 4),
+(3, 6);
+
+-- Réservations (au moins 5)
+INSERT INTO Reservation (idClient, idTable, dateReservation, heure, nombrePersonnes) VALUES
+(1, 2, '2025-11-20', '19:00:00', 4),  -- Imad
+(2, 3, '2025-11-20', '20:00:00', 5),  -- Hamza
+(1, 1, '2025-11-21', '18:30:00', 2),  -- Imad
+(3, 2, '2025-11-22', '21:00:00', 4),  -- Brahim
+(1, 3, '2025-11-23', '19:30:00', 6);  -- Imad</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.4s;">
+            <h2>4) Requêtes SELECT simples (avec SQL)</h2>
+            <p><strong>1. Afficher tous les clients</strong></p>
+            <pre class="sql">SELECT * FROM Client;</pre>
+
+            <p><strong>2. Afficher toutes les tables du restaurant</strong></p>
+            <pre class="sql">SELECT * FROM TableRestaurant;</pre>
+
+            <p><strong>3. Afficher toutes les réservations</strong></p>
+            <pre class="sql">SELECT * FROM Reservation;</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.5s;">
+            <h2>5) Requêtes avec conditions</h2>
+            <p><strong>4. Afficher les réservations du client nommé "Imad"</strong></p>
+            <pre class="sql">SELECT r.*
+FROM Reservation r
+JOIN Client c ON r.idClient = c.idClient
+WHERE c.nom = 'Sara';</pre>
+
+            <p><strong>5. Afficher les tables ayant une capacité supérieure ou égale à 4</strong></p>
+            <pre class="sql">SELECT * FROM TableRestaurant WHERE capacite >= 4;</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.6s;">
+            <h2>6) Requêtes avec JOINTURE</h2>
+            <p><strong>6. Liste des réservations — nom du client, numéro de table, date et heure</strong></p>
+            <pre class="sql">SELECT r.idReservation,
+       c.nom AS client,
+       t.numero AS numeroTable,
+       r.dateReservation,
+       r.heure
+FROM Reservation r
+JOIN Client c ON r.idClient = c.idClient
+JOIN TableRestaurant t ON r.idTable = t.idTable;</pre>
+
+            <p><strong>7. Afficher les réservations triées par date puis par heure</strong></p>
+            <pre class="sql">SELECT r.idReservation, c.nom, t.numero, r.dateReservation, r.heure
+FROM Reservation r
+JOIN Client c ON r.idClient = c.idClient
+JOIN TableRestaurant t ON r.idTable = t.idTable
+ORDER BY r.dateReservation ASC, r.heure ASC;</pre>
+
+            <p><strong>8. Afficher les clients qui ont effectué plus d'une réservation</strong></p>
+            <pre class="sql">SELECT c.nom, COUNT(r.idReservation) AS nbReservations
+FROM Client c
+JOIN Reservation r ON c.idClient = r.idClient
+GROUP BY c.idClient, c.nom
+HAVING COUNT(r.idReservation) > 1;</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.7s;">
+            <h2>7) Requête bonus — nombre total de réservations par jour</h2>
+            <pre class="sql">SELECT dateReservation, COUNT(*) AS totalReservations
+FROM Reservation
+GROUP BY dateReservation
+ORDER BY dateReservation;</pre>
+        </div>
+
+        <div class="section-animate" style="animation-delay: 0.8s;">
+            <h2>Exemples de résultats attendus</h2>
+
+            <h3>Table <code>Client</code></h3>
+            <table>
+                <thead><tr><th>idClient</th><th>nom</th><th>telephone</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>Imad</td><td>060000001</td></tr>
+                    <tr><td>2</td><td>Hamza</td><td>060000002</td></tr>
+                    <tr><td>3</td><td>Brahim</td><td>060000003</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Table <code>TableRestaurant</code></h3>
+            <table>
+                <thead><tr><th>idTable</th><th>numero</th><th>capacite</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>1</td><td>2</td></tr>
+                    <tr><td>2</td><td>2</td><td>4</td></tr>
+                    <tr><td>3</td><td>3</td><td>6</td></tr>
+                </tbody>
+            </table>
+
+            <h3>Table <code>Reservation</code></h3>
+            <table>
+                <thead><tr><th>idReservation</th><th>idClient</th><th>idTable</th><th>dateReservation</th><th>heure</th><th>nombrePersonnes</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>1</td><td>2</td><td>2025-11-20</td><td>19:00:00</td><td>4</td></tr>
+                    <tr><td>2</td><td>2</td><td>3</td><td>2025-11-20</td><td>20:00:00</td><td>5</td></tr>
+                    <tr><td>3</td><td>1</td><td>1</td><td>2025-11-21</td><td>18:30:00</td><td>2</td></tr>
+                    <tr><td>4</td><td>3</td><td>2</td><td>2025-11-22</td><td>21:00:00</td><td>4</td></tr>
+                    <tr><td>5</td><td>1</td><td>3</td><td>2025-11-23</td><td>19:30:00</td><td>6</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
